@@ -6,11 +6,11 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      'tp-viewer3d/worker': 'tp-viewer3d/dist/worker.js'
+      'viewer/worker': 'viewer/dist/worker.js'
     }
   },
   optimizeDeps: {
-    exclude: ['tp-viewer3d'],
+    exclude: ['viewer'],
     include: ['stats.js'],
     esbuildOptions: {
       format: 'esm'
@@ -18,22 +18,31 @@ export default defineConfig({
   },
   plugins: [
     {
-      name: 'fix-tp-viewer3d-worker',
+      name: 'fix-viewer-worker',
       enforce: 'pre',
       transform(code, id) {
-        if (id.includes('tp-viewer3d/dist/index.js')) {
-          // Исправляем путь к воркеру
-          // Проблема: Object.assign не содержит ключа "./worker.js", поэтому возвращается undefined
-          // Заменяем всю проблемную строку целиком
-          // Заменяем проблемную конструкцию, где Object.assign не содержит "./worker.js"
-          // Используем более гибкий паттерн, который учитывает возможные комментарии
-          const fixedCode = code.replace(
-            /n = new URL\(\([^)]*Object\.assign\([^)]*\)\)\[`\.\/\$\{s\}`\], import\.meta\.url\)/,
-            'n = new URL("./worker.js", import.meta.url)'
-          )
-          return fixedCode
+        if (id.includes('viewer/dist/index.js')) {
+          // Исправляем проблему с workerFileName, который становится undefined
+          // Проблема: Object.assign не содержит ключа "./worker.js"
+          // Ищем паттерн: new URL(Object.assign(...)[`./${s}`], import.meta.url)
+          // где s может быть "worker.js", но Object.assign не содержит этого ключа
+          
+          // Более точный паттерн, который ищет всю конструкцию с Object.assign
+          const pattern = /new URL\(\([^)]*Object\.assign\([^)]*\)\)\[`\.\/\$\{[^}]+\}`\],\s*import\.meta\.url\)/g;
+          
+          const fixedCode = code.replace(pattern, (match) => {
+            // Проверяем, содержит ли Object.assign "./worker.js"
+            if (match.includes('"./worker.js"') || match.includes("'./worker.js'")) {
+              // Если содержит, оставляем как есть
+              return match;
+            }
+            // Если не содержит, заменяем на прямую ссылку на worker.js
+            return 'new URL("./worker.js", import.meta.url)';
+          });
+          
+          return fixedCode;
         }
-        return null
+        return null;
       }
     }
   ]

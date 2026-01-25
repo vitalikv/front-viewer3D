@@ -1,5 +1,5 @@
 {
-  "name": "vite-pack-2-test",
+  "name": "front-viewer3d",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
@@ -11,6 +11,6 @@
     "vite": "^5.0.0"
   },
   "dependencies": {
-    "tp-viewer3d": "file:pack/tp-viewer3d-1.0.0.tgz"
+    "viewer": "file:pack/viewer-1.0.0.tgz"
   }
 }

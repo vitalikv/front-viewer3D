@@ -1,4 +1,4 @@
-import { initViewer3D } from 'tp-viewer3d'
+import { initViewer3D } from 'viewer'
 
 // Получаем элементы из DOM
 const container = document.getElementById('container')
