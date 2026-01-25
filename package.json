@@ -1,0 +1,16 @@
+{
+  "name": "vite-pack-2-test",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "tp-viewer3d": "file:pack/tp-viewer3d-1.0.0.tgz"
+  }
+}
