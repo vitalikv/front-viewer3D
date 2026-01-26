@@ -4,43 +4,30 @@ export default defineConfig({
   server: {
     port: 3000,
   },
-  resolve: {
-    alias: {
-      'viewer/worker': 'viewer/dist/worker.js'
-    }
-  },
   optimizeDeps: {
-    exclude: ['viewer'],
-    include: ['stats.js'],
-    esbuildOptions: {
-      format: 'esm'
-    }
+    exclude: ['tflex-viewer', 'stats.js']
   },
   plugins: [
     {
-      name: 'fix-viewer-worker',
+      name: 'fix-stats-js',
       enforce: 'pre',
+      transformIndexHtml(html) {
+        
+        return html.replace(
+          '<head>',
+          `<head>
+    <script src="/node_modules/stats.js/build/stats.min.js"></script>`
+        );
+      },
       transform(code, id) {
-        if (id.includes('viewer/dist/index.js')) {
-          // Исправляем проблему с workerFileName, который становится undefined
-          // Проблема: Object.assign не содержит ключа "./worker.js"
-          // Ищем паттерн: new URL(Object.assign(...)[`./${s}`], import.meta.url)
-          // где s может быть "worker.js", но Object.assign не содержит этого ключа
+        
+        if (id.includes('tflex-viewer/dist/index.js')) {
           
-          // Более точный паттерн, который ищет всю конструкцию с Object.assign
-          const pattern = /new URL\(\([^)]*Object\.assign\([^)]*\)\)\[`\.\/\$\{[^}]+\}`\],\s*import\.meta\.url\)/g;
-          
-          const fixedCode = code.replace(pattern, (match) => {
-            // Проверяем, содержит ли Object.assign "./worker.js"
-            if (match.includes('"./worker.js"') || match.includes("'./worker.js'")) {
-              // Если содержит, оставляем как есть
-              return match;
-            }
-            // Если не содержит, заменяем на прямую ссылку на worker.js
-            return 'new URL("./worker.js", import.meta.url)';
-          });
-          
-          return fixedCode;
+          return code.replace(
+            /import\s+(\w+)\s+from\s+["']stats\.js["']/g,
+            `// Используем window.Stats, который загружается через script тег в index.html
+const $1 = typeof window !== 'undefined' ? window.Stats : null;`
+          );
         }
         return null;
       }

@@ -11,6 +11,6 @@
     "vite": "^5.0.0"
   },
   "dependencies": {
-    "viewer": "file:pack/viewer-1.0.0.tgz"
+    "tflex-viewer": "file:pack/tflex-viewer-1.0.0.tgz"
   }
 }
