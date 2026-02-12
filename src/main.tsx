@@ -1,7 +1,9 @@
 import 'reflect-metadata';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { TFlexViewer3D } from 'tflex-viewer';
+import { TFlexViewer3D, IViewer3DInstance } from 'tflex-viewer';
+import 'tflex-docs-uiwec-kit/index.css';
+import '../node_modules/tflex-viewer/dist/index.css';
 
 interface AppProps {}
 
@@ -13,7 +15,7 @@ class App extends React.Component<AppProps, AppState> {
     this.state = {};
   }
 
-  handleInit = async (instance: any) => {
+  handleInit = async (instance: IViewer3DInstance) => {
     console.log('Viewer инициализирован:', instance);
 
     await instance.loadAssemblyJson('/public/assets/ТРР-1-000 - Транспортер - A.1 (5).json');
@@ -22,7 +24,7 @@ class App extends React.Component<AppProps, AppState> {
 
   render() {
     return (
-      <div>
+      <div style={{ height: '100%', width: '100%' }}>
         <TFlexViewer3D
           useWorker={true}
           config={{
