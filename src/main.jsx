@@ -1,23 +1,23 @@
+import 'reflect-metadata';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { TFlexViewer3D } from 'tflex-viewer';
 
 function App() {
-  const handleInit = (instance) => {
+  const handleInit = async (instance) => {
     console.log('Viewer инициализирован:', instance);
-    
-    instance.loadAssemblyJson('/public/assets/ТРР-1-000 - Транспортер - A.1 (5).json');
-    instance.loadModel('/public/assets/ТРР-1-000 - Транспортер - A.1 (1).gltf');
+
+    await instance.loadAssemblyJson('/public/assets/ТРР-1-000 - Транспортер - A.1 (5).json');
+    await instance.loadModel('667ee52f-2a9c-41b5-982a-a167e4e80e0a');
   };
 
   return (
     <div>
-      <h1>viewer3d</h1>
       <TFlexViewer3D
         useWorker={true}
         config={{
           lang: 'ru',
-          theme: 'light'
+          theme: 'light',
         }}
         onInit={handleInit}
       />
